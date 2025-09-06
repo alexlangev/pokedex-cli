@@ -1,6 +1,8 @@
-package main
+package repl
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestCleanInput(t *testing.T) {
 	// slice of test case structs
