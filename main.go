@@ -7,6 +7,47 @@ import (
 	"strings"
 )
 
+type cliCommand struct {
+	name        string
+	description string
+	callback    func() error
+}
+
+type commandRegistry map[string]cliCommand
+
+func getCommands() map[string]cliCommand {
+	return commandRegistry{
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+	}
+}
+
+func commandExit() error {
+	fmt.Println("Closing the Pokedex... Goodbye!")
+	os.Exit(0)
+
+	return nil // what error should it return
+}
+
+func commandHelp() error {
+	fmt.Println("Welcome to the Pokedex!")
+	fmt.Println("Usage:")
+	fmt.Println("")
+	for _, c := range getCommands() {
+		fmt.Printf("%s: %s\n", c.name, c.description)
+	}
+
+	return nil
+}
+
 func cleanInput(text string) []string {
 	text = strings.ToLower(text)
 	text = strings.Trim(text, " ")
@@ -16,11 +57,11 @@ func cleanInput(text string) []string {
 }
 
 func main() {
+	scanner := bufio.NewScanner(os.Stdin)
+	rawInput := ""
+
 	for {
 		fmt.Print("Pokedex > ")
-
-		scanner := bufio.NewScanner(os.Stdin)
-		rawInput := ""
 
 		_ = scanner.Scan()
 		rawInput = scanner.Text()
@@ -29,6 +70,14 @@ func main() {
 		}
 
 		cleanedInput := cleanInput(rawInput)
-		fmt.Printf("Your command was: %s\n", cleanedInput[0])
+		commands := getCommands()
+
+		switch cleanedInput[0] {
+		case commands["exit"].name:
+			commands["exit"].callback()
+
+		case commands["help"].name:
+			commands["help"].callback()
+		}
 	}
 }
