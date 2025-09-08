@@ -53,6 +53,11 @@ func getCommands() map[string]cliCommand {
 			description: "Print the next 20 locations",
 			callback:    commandMap,
 		},
+		"mapb": {
+			name:        "mapb",
+			description: "Print the previous 20 locations",
+			callback:    commandMapb,
+		},
 	}
 }
 
@@ -131,6 +136,52 @@ func commandMap(c *config) error {
 	return nil
 }
 
+func commandMapb(c *config) error {
+	var url string
+
+	if c.prevUrl == "" {
+		fmt.Println("You're on the first page")
+	} else {
+		url = c.prevUrl
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.client.HttpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	var locations ResponseLocations
+	err = json.Unmarshal(data, &locations)
+	if err != nil {
+		return err
+	}
+
+	if locations.Next != nil {
+		c.nextUrl = *locations.Next
+	}
+	if locations.Previous != nil {
+		c.prevUrl = *locations.Previous
+	} else {
+		c.prevUrl = ""
+	}
+
+	for _, loc := range locations.Results {
+		fmt.Println(loc.Name)
+	}
+	return nil
+}
+
 func Repl() {
 	cli := client.NewClient()
 	cfg := config{
@@ -164,6 +215,9 @@ func Repl() {
 
 		case commands["map"].name:
 			commands["map"].callback(&cfg)
+
+		case commands["mapb"].name:
+			commands["mapb"].callback(&cfg)
 		}
 	}
 }
