@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func commandMapb(cfg *Config) error {
+func commandMapb(cfg *Config, arg string) error {
 	if cfg.prevUrl == nil {
 		fmt.Println("No previous locations")
 		return nil

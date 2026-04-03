@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func commandMap(cfg *Config) error {
+func commandMap(cfg *Config, arg string) error {
 	const locationAreasEndpoint = "location-area/"
 
 	fullURL := cfg.nextUrl

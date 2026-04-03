@@ -20,6 +20,23 @@ type Location struct {
 	URL  string `json:"url"`
 }
 
+type Pokemon struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type LocationDetails struct {
+	ID       int `json:"id"`
+	Location struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"location"`
+	Name              string `json:"name"`
+	PokemonEncounters []struct {
+		Pokemon Pokemon `json:"pokemon"`
+	} `json:"pokemon_encounters"`
+}
+
 func (c *Client) GetLocationAreas(url string, cache *pokecache.Cache) (LocationAreas, error) {
 	cachedData, ok := cache.Get(url)
 	if ok {
@@ -57,4 +74,31 @@ func (c *Client) GetLocationAreas(url string, cache *pokecache.Cache) (LocationA
 	}
 
 	return locationsRes, nil
+}
+
+func (c *Client) ExploreLocationArea(url string, cache *pokecache.Cache) (LocationDetails, error) {
+	// check cache
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return LocationDetails{}, nil
+	}
+
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		return LocationDetails{}, err
+	}
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		return LocationDetails{}, err
+	}
+
+	var locDetails LocationDetails
+	err = json.Unmarshal(data, &locDetails)
+	if err != nil {
+		return LocationDetails{}, err
+	}
+
+	return locDetails, nil
 }
