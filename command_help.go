@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func commandHelp(cfg *Config) error {
 	fmt.Println()

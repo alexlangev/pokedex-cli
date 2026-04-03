@@ -15,7 +15,7 @@ func commandMap(cfg *Config) error {
 		fullURL = &url
 	}
 
-	locs, err := cfg.pokeClient.GetLocationAreas(*fullURL)
+	locs, err := cfg.pokeClient.GetLocationAreas(*fullURL, cfg.pokeCache)
 	if err != nil {
 		return err
 	}

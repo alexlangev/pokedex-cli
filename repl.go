@@ -55,7 +55,7 @@ func repl(cfg *Config) {
 		if command, ok := getCommands()[command]; ok {
 			err := command.callback(cfg)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			}
 			continue
 		} else {

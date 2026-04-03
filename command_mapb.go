@@ -8,7 +8,7 @@ func commandMapb(cfg *Config) error {
 		return nil
 	}
 
-	locs, err := cfg.pokeClient.GetLocationAreas(*cfg.prevUrl)
+	locs, err := cfg.pokeClient.GetLocationAreas(*cfg.prevUrl, cfg.pokeCache)
 	if err != nil {
 		return err
 	}
