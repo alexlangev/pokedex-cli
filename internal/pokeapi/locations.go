@@ -77,7 +77,16 @@ func (c *Client) GetLocationAreas(url string, cache *pokecache.Cache) (LocationA
 }
 
 func (c *Client) ExploreLocationArea(url string, cache *pokecache.Cache) (LocationDetails, error) {
-	// check cache
+	cachedData, ok := cache.Get(url)
+	if ok {
+		locDetails := LocationDetails{}
+		err := json.Unmarshal(cachedData, &locDetails)
+		if err != nil {
+			return LocationDetails{}, err
+		}
+		return locDetails, nil
+	}
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return LocationDetails{}, nil
@@ -93,6 +102,8 @@ func (c *Client) ExploreLocationArea(url string, cache *pokecache.Cache) (Locati
 	if err != nil {
 		return LocationDetails{}, err
 	}
+
+	cache.Add(url, data)
 
 	var locDetails LocationDetails
 	err = json.Unmarshal(data, &locDetails)

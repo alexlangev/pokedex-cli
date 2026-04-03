@@ -6,6 +6,7 @@ import (
 
 func commandExplore(cfg *Config, arg string) error {
 	fullURL := cfg.baseUrl + "location-area/" + arg
+
 	fmt.Printf("Exploring %s...\n", arg)
 
 	locDetails, err := cfg.pokeClient.ExploreLocationArea(fullURL, cfg.pokeCache)
