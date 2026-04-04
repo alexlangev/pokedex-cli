@@ -20,11 +20,6 @@ type Location struct {
 	URL  string `json:"url"`
 }
 
-type Pokemon struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
-}
-
 type LocationDetails struct {
 	ID       int `json:"id"`
 	Location struct {
